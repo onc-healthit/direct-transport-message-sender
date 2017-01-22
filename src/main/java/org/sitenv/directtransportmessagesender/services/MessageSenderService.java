@@ -1,10 +1,11 @@
 package org.sitenv.directtransportmessagesender.services;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.sitenv.directtransportmessagesender.dto.MessageSenderResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.mail.MailParseException;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -41,12 +42,17 @@ public class MessageSenderService {
 
             FileSystemResource file = new FileSystemResource(selectedFile);
             helper.addAttachment(file.getFilename(), file);
+            javaMailSender.send(message);
+            messageSenderResult.setSuccess(true);
+            messageSenderResult.setMessage("Message has been sent to the host successfully - no more information is available. Please check the inbox of " + to + " to ensure delivery.");
         }catch (MessagingException e) {
-            throw new MailParseException(e);
+            messageSenderResult.setSuccess(false);
+            messageSenderResult.setMessage("Message not sent with the following error: " + ExceptionUtils.getStackTrace(e));
+        }catch (MailSendException e){
+            messageSenderResult.setSuccess(false);
+            messageSenderResult.setMessage("Could not connect to the mail server with the following error : " + ExceptionUtils.getStackTrace(e));
         }
-        javaMailSender.send(message);
-        messageSenderResult.setSuccess(true);
-        messageSenderResult.setMessage("Message has been sent to the host successfully - no more information is available. Please check the inbox of " + to + " to ensure delivery.");
+
         return messageSenderResult;
     }
 }
