@@ -1,6 +1,7 @@
 package org.sitenv.directtransportmessagesender.configuration;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.sitenv.common.utilities.encryption.DesEncrypter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +19,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 
 @EnableWebMvc
@@ -26,6 +30,7 @@ import java.util.Properties;
 @PropertySource(value = "/META-INF/maven/org.sitenv/directtransportmessagesender/pom.properties", ignoreResourceNotFound=true)
 public class MvcConfiguration extends WebMvcConfigurerAdapter {
     private static final String ENCRYPTEDKEY = "sitplatform@1234";
+    private static List<String> files = new ArrayList<>();
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -49,12 +54,12 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public JavaMailSender mailSender(final Environment environment, String smtpPassword){
+    public JavaMailSender mailSender(final Environment environment){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(environment.getProperty("smtphostname"));
         mailSender.setPort(Integer.parseInt(environment.getProperty("smtpport")));
         mailSender.setUsername(environment.getProperty("smtpusername"));
-        mailSender.setPassword(smtpPassword);
+        mailSender.setPassword(getSmtpPassword(environment));
 
         Properties javaMailProperties = new Properties();
         javaMailProperties.put("mail.smtp.starttls.enable", environment.getProperty("smtpenablessl"));
@@ -66,8 +71,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
         return mailSender;
     }
 
-    @Bean
-    public String smtpPassword(final Environment environment){
+    private static final String getSmtpPassword(final Environment environment){
         String smtppswrd = null;
         try {
             smtppswrd = FileUtils.readFileToString(new File(environment.getProperty("smtppswdPath")));
@@ -75,5 +79,20 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
             e.printStackTrace();
         }
         return new DesEncrypter(ENCRYPTEDKEY).decrypt(smtppswrd);
+    }
+
+    @Bean
+    public static final List<String> ccdaFileList(final Environment environment){
+        List<String> fileNames = new ArrayList<>();
+        try {
+            Collection<File> filesb =
+                    FileUtils.listFiles(new File(environment.getProperty("sampleCcdaDir")), TrueFileFilter.INSTANCE, TrueFileFilter.INSTANCE);
+            for (File file : filesb) {
+                fileNames.add(file.getCanonicalPath());
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        return fileNames;
     }
 }

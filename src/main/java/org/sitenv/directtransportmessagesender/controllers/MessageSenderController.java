@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  * Created by Brian on 1/19/2017.
  */
 @RestController
 public class MessageSenderController {
     private MessageSenderService messageSenderService;
+    @Resource
+    private List<String> ccdaFileList;
 
     @Autowired
     public MessageSenderController(MessageSenderService messageSenderService) {
@@ -32,4 +37,10 @@ public class MessageSenderController {
                                                  @RequestParam(value = "attachment", required = true) MultipartFile attachment){
         return messageSenderService.sendMessageWithAttachment(toAddress, attachment);
     }
+
+    @RequestMapping(value = "/listsampleccdafiles", method = RequestMethod.GET)
+    public List<String> getSampleCcdaList(){
+        return ccdaFileList;
+    }
+
 }
