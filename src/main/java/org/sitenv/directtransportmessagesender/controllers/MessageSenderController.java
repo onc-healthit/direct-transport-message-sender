@@ -1,6 +1,9 @@
 package org.sitenv.directtransportmessagesender.controllers;
 
 import org.sitenv.directtransportmessagesender.dto.MessageSenderResult;
+import org.sitenv.directtransportmessagesender.dto.ReceivedMessage;
+import org.sitenv.directtransportmessagesender.services.DirectHhsMessageSearcher;
+import org.sitenv.directtransportmessagesender.services.DirectSitenvMessageSearcher;
 import org.sitenv.directtransportmessagesender.services.MessageSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +21,16 @@ import java.util.List;
 @RestController
 public class MessageSenderController {
     private MessageSenderService messageSenderService;
+    private DirectSitenvMessageSearcher directSitenvMessageSearcher;
+    private DirectHhsMessageSearcher directHhsMessageSearcher;
     @Resource
     private List<String> ccdaFileList;
 
     @Autowired
-    public MessageSenderController(MessageSenderService messageSenderService) {
+    public MessageSenderController(MessageSenderService messageSenderService, DirectSitenvMessageSearcher directSitenvMessageSearcher, DirectHhsMessageSearcher directHhsMessageSearcher) {
         this.messageSenderService = messageSenderService;
+        this.directSitenvMessageSearcher = directSitenvMessageSearcher;
+        this.directHhsMessageSearcher = directHhsMessageSearcher;
     }
 
     @RequestMapping(value = "/sendmessagewithattachmentfilepath", method = RequestMethod.POST)
@@ -43,4 +50,13 @@ public class MessageSenderController {
         return ccdaFileList;
     }
 
+    @RequestMapping(value = "/searchsiteinbox", method = RequestMethod.GET)
+    public List<ReceivedMessage> searchSiteInbox(@RequestParam(value = "fromAddress") String fromAddress){
+        return directSitenvMessageSearcher.searchEmailByFromAddress(fromAddress);
+    }
+
+    @RequestMapping(value = "/searchhhsinbox", method = RequestMethod.GET)
+    public List<ReceivedMessage> searchHhsInbox(@RequestParam(value = "fromAddress") String fromAddress){
+        return directHhsMessageSearcher.searchEmailByFromAddress(fromAddress);
+    }
 }

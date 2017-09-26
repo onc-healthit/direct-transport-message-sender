@@ -4,7 +4,7 @@
 
     <groupId>org.sitenv</groupId>
     <artifactId>directtransportmessagesender</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>war</packaging>
 
     <dependencies>
@@ -77,10 +77,20 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.5.0</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>1.4.7</version>
+        </dependency>-->
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.sitenv.common</groupId>
