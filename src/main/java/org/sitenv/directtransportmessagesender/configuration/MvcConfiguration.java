@@ -69,7 +69,7 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
         Properties javaMailProperties = new Properties();
         // imap setting
         javaMailProperties.put("mail.imap.host", environment.getProperty("site.smtphostname"));
-        javaMailProperties.put("mail.imap.port", String.valueOf(environment.getProperty("imapport")));
+        javaMailProperties.put("mail.imap.port", "143");
         javaMailProperties.put("mail.imap.ssl.enable", false);
         javaMailProperties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
         javaMailProperties.setProperty("mail.imap.socketFactory.fallback", "true");
