@@ -1,10 +1,14 @@
 <Context reloadable="true">
     <Parameter name="sampleCcdaDir" value="${sampleCcdaDir}" override="true"/>
 	<Parameter name="directFromEndpoint" value="${directFromEndpoint}" override="true"/>
-    <Parameter name="smtphostname" value="${smtphostname}" override="true"/>
     <Parameter name="smtpport" value="${smtpport}" override="true"/>
-    <Parameter name="smtpusername" value="${smtpusername}" override="true"/>
-    <Parameter name="smtppswdPath" value="${smtppswdPath}" override="true"/>
+    <Parameter name="site.smtphostname" value="${site.smtphostname}" override="true"/>
+    <Parameter name="site.smtpusername" value="${site.smtpusername}" override="true"/>
+    <Parameter name="site.smtppswdPath" value="${site.smtppswdPath}" override="true"/>
+    <Parameter name="hhs.smtphostname" value="${hhs.smtphostname}" override="true"/>
+    <Parameter name="hhs.smtpusername" value="${hhs.smtpusername}" override="true"/>
+    <Parameter name="hhs.smtppswdPath" value="${hhs.smtppswdPath}" override="true"/>
     <Parameter name="smtpenablessl" value="${smtpenablessl}" override="true"/>
     <Parameter name="getDcService" value="${getDcService}" override="true"/>
+    <Parameter name="imapport" value="${imapport}" override="true"/>
 </Context>

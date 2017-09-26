@@ -54,31 +54,79 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public JavaMailSender mailSender(final Environment environment){
+    public JavaMailSender mailSender(final Environment environment, Properties siteMailProperties, String siteSmtpPassword){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(environment.getProperty("smtphostname"));
+        mailSender.setHost(environment.getProperty("site.smtphostname"));
         mailSender.setPort(Integer.parseInt(environment.getProperty("smtpport")));
-        mailSender.setUsername(environment.getProperty("smtpusername"));
-        mailSender.setPassword(getSmtpPassword(environment));
+        mailSender.setUsername(environment.getProperty("site.smtpusername"));
+        mailSender.setPassword(siteSmtpPassword);
+        mailSender.setJavaMailProperties(siteMailProperties);
+        return mailSender;
+    }
 
+    @Bean
+    public Properties siteMailProperties(final Environment environment){
         Properties javaMailProperties = new Properties();
+        // imap setting
+        javaMailProperties.put("mail.imap.host", environment.getProperty("site.smtphostname"));
+        javaMailProperties.put("mail.imap.port", String.valueOf(environment.getProperty("imapport")));
+        javaMailProperties.put("mail.imap.ssl.enable", false);
+        javaMailProperties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        javaMailProperties.setProperty("mail.imap.socketFactory.fallback", "true");
+        javaMailProperties.setProperty("mail.imap.socketFactory.port", String.valueOf(environment.getProperty("imapport")));
+
+        //smtp settings
+        javaMailProperties.put("mail.smtp.host", environment.getProperty("site.smtpusername"));
+        javaMailProperties.put("mail.smtp.port", Integer.parseInt(environment.getProperty("smtpport")));
         javaMailProperties.put("mail.smtp.starttls.enable", environment.getProperty("smtpenablessl"));
         javaMailProperties.put("mail.smtp.auth", "true");
         javaMailProperties.put("mail.transport.protocol", "smtp");
         javaMailProperties.put("mail.debug", "true");
-
-        mailSender.setJavaMailProperties(javaMailProperties);
-        return mailSender;
+        return javaMailProperties;
     }
 
-    private static final String getSmtpPassword(final Environment environment){
+    @Bean
+    public String siteSmtpPassword(final Environment environment){
         String smtppswrd = null;
         try {
-            smtppswrd = FileUtils.readFileToString(new File(environment.getProperty("smtppswdPath")));
+            smtppswrd = FileUtils.readFileToString(new File(environment.getProperty("site.smtppswdPath")));
         } catch (IOException e) {
             e.printStackTrace();
         }
         return new DesEncrypter(ENCRYPTEDKEY).decrypt(smtppswrd);
+    }
+
+    @Bean
+    public Properties hhsMailProperties(final Environment environment){
+        Properties javaMailProperties = new Properties();
+        // imap setting
+        javaMailProperties.put("mail.imap.host", environment.getProperty("hhs.smtphostname"));
+        javaMailProperties.put("mail.imap.port", 993);
+        javaMailProperties.put("mail.imap.ssl.enable", true);
+        javaMailProperties.setProperty("mail.imap.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        javaMailProperties.setProperty("mail.imap.socketFactory.fallback", "true");
+        javaMailProperties.setProperty("mail.imap.socketFactory.port", "993");
+
+        //smtp settings
+        javaMailProperties.put("mail.smtp.host", environment.getProperty("hhs.smtpusername"));
+        javaMailProperties.put("mail.smtp.port", Integer.parseInt(environment.getProperty("smtpport")));
+        javaMailProperties.put("mail.smtp.starttls.enable", environment.getProperty("smtpenablessl"));
+        javaMailProperties.put("mail.smtp.auth", "true");
+        javaMailProperties.put("mail.transport.protocol", "smtp");
+        javaMailProperties.put("mail.debug", "true");
+        return javaMailProperties;
+    }
+
+    @Bean(name="hhsSmtpPassword")
+    public String hhsSmtpPassword(final Environment environment){
+        String hhssmtppswrd = null;
+        try {
+            hhssmtppswrd = FileUtils.readFileToString(new File(environment.getProperty("hhs.smtppswdPath")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String decryptedPass = new DesEncrypter(ENCRYPTEDKEY).decrypt(hhssmtppswrd);
+        return decryptedPass;
     }
 
     @Bean
