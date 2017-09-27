@@ -2,12 +2,17 @@ package org.sitenv.directtransportmessagesender.dto;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class ReceivedMessage {
     private Date dateSent;
     private Date dateReceived;
     private String subject;
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+
+    public ReceivedMessage() {
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+    }
 
     public String getDateSent() {
         if (dateSent == null) {
