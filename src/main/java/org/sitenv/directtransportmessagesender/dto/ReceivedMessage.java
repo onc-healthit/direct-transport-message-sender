@@ -8,10 +8,10 @@ public class ReceivedMessage {
     private Date dateSent;
     private Date dateReceived;
     private String subject;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat();
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat ("E, dd MMM yyyy hh:mm:ss Z (zzz)");
 
     public ReceivedMessage() {
-        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+        
     }
 
     public String getDateSent() {
