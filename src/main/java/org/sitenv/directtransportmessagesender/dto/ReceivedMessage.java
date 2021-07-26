@@ -8,7 +8,7 @@ public class ReceivedMessage {
     private Date dateSent;
     private Date dateReceived;
     private String subject;
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat ("E, dd MMM yyyy hh:mm:ss Z (zzz)");
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat ("MM/dd/yyyy hh:mm aa");
 
     public ReceivedMessage() {
         
